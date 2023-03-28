@@ -15,8 +15,15 @@ def check_pref(comp, s1, s2):
             return True
         if c == s1:
             return False
+        
+def check_pref_fast(comp, s1, s2, company_ranking):
+    if company_ranking[comp][s2] < company_ranking[comp][s1]:
+        return True
+    else:
+        return False
 
-def solve(pairs, company, student, q):
+
+def solve(pairs, company, student, q, company_ranking):
     #print(pairs)
     #print(company)
     #print(student)
@@ -34,7 +41,7 @@ def solve(pairs, company, student, q):
         if applicants[pref_comp] == -1:
             applicants[pref_comp] = s
 
-        elif check_pref(company[pref_comp], curr_applicant, s):
+        elif check_pref_fast(pref_comp, curr_applicant, s, company_ranking):
             q.append(applicants[pref_comp])
             applicants[pref_comp] = s
 
@@ -52,18 +59,49 @@ pairs = ni()
 #structure arr[id] = [[preferences], current application id]
 company = [[] for _ in range(pairs+1)]
 student = [[]for _ in range(pairs+1)]
+company_ranking = [[1e5 for i in range(pairs+1)] for i in range(pairs+1)] #more memory for better time complexiity? O(N^2) memory
 student_ids = []
 
 seen = {}
-for case in range(2*pairs):
-    row = nl()
-    id = row[0]
+
+
+#really a low blow to not format in rows
+inputstream = []
+while True:
+    try:
+        for el in nl():
+            inputstream.append(el)
+    except:
+        break
+
+#print(inputstream)
+##print(2 * pairs)
+for block in range(2*pairs):
+    row = []
+    a, b = 0, 0
+    if block == 0:
+        row = inputstream[:pairs+1]
+        b = pairs + 1
+    else:
+        #row = inputstream[(pairs+1)*block:(pairs+1)*block + pairs+1]
+        a = pairs+1*block
+        b = (pairs+1)*block + pairs+1
+    id = inputstream[a]
+    row = []
+    for i in range(a, b):
+        row.append(inputstream[i])
     if id in seen:
-        student[id] = [row[1:], 0]
+        student[id] = [row, 0]
         student_ids.append(id)
     else:
-        company[id] = row[1:]
+        company[id] = row
         seen[id] = True
+        for i in range(len(company[id])):
+            company_ranking[id][company[id][i]] = i
+    
+# for row in company_ranking:
+#     print(row)
 
 
-solve(pairs,company, student, student_ids)
+
+solve(pairs,company, student, student_ids, company_ranking)
