@@ -8,8 +8,6 @@ def nl(): return [int(_) for _ in INP().split()] #new line of ints
 
 
 def check_pref(comp, s1, s2):
-    #return true if s2 is prefered over s1
-    #print(comp, s1, s2)
     for c in comp:
         if c == s2:
             return True
@@ -24,14 +22,12 @@ def check_pref_fast(comp, s1, s2, company_ranking):
 
 
 def solve(pairs, company, student, q, company_ranking):
-    #print(pairs)
-    #print(company)
-    #print(student)
-    #print(q)
+
+    q = deque(q)
     applicants = [-1 for _ in range(pairs+1)]
     
     while q:
-        s = q.pop(0)
+        s = q.popleft()
         #print(student)
         ranking,  apply_idx = student[s]
         pref_comp = ranking[apply_idx]
@@ -69,12 +65,11 @@ seen = {}
 inputstream = []
 while True:
     try:
-        inputstream += nl() #I know this is slow
+        inputstream += nl() #Isslow
     except:
         break
 
-#print(inputstream)
-##print(2 * pairs)
+# 
 for block in range(2*pairs):
     row = []
     if block == 0:
@@ -90,7 +85,7 @@ for block in range(2*pairs):
     else:
         company[id] = row
         seen[id] = True
-        for i in range(len(company[id])):
+        for i in range(len(company[id])): #O(N^2)
             company_ranking[id][company[id][i]] = i
     
 # for row in company_ranking:
